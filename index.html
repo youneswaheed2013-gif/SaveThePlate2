@@ -1,0 +1,1320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SaveThePlate Egypt — قلل الهدر، وفّر أكتر</title>
+    <style>
+        :root {
+            --primary: #2e7d32;
+            --primary-dark: #1b5e20;
+            --primary-light: #4caf50;
+            --accent: #ff9800;
+            --accent-dark: #e65100;
+            --danger: #c62828;
+            --bg: #f5f5f5;
+            --card-bg: #ffffff;
+            --text: #212121;
+            --text-light: #757575;
+            --border: #e0e0e0;
+            --shadow: 0 2px 12px rgba(0,0,0,0.08);
+            --shadow-lg: 0 8px 30px rgba(0,0,0,0.12);
+            --radius: 12px;
+            --transition: 0.3s cubic-bezier(.4,0,.2,1);
+            --max-width: 1200px;
+        }
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: var(--bg); color: var(--text);
+            line-height: 1.6; min-height: 100vh;
+            display: flex; flex-direction: column;
+        }
+        img { max-width: 100%; display: block; }
+        button, input, select, textarea { font-family: inherit; font-size: inherit; border: none; outline: none; }
+        a { text-decoration: none; color: inherit; }
+        ul { list-style: none; }
+
+        .container { max-width: var(--max-width); margin: 0 auto; padding: 0 20px; width: 100%; }
+        .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); }
+        .badge { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; }
+        .badge-discount { background: var(--accent); color: #fff; }
+        .badge-category { background: #e8f5e9; color: var(--primary-dark); }
+        .badge-donated { background: #e3f2fd; color: #1565c0; }
+        .badge-egypt { background: #fff3e0; color: #e65100; }
+        .text-center { text-align: center; }
+        .mt-1 { margin-top: 0.5rem; }
+        .mt-2 { margin-top: 1rem; }
+        .mt-3 { margin-top: 1.5rem; }
+        .mb-2 { margin-bottom: 1rem; }
+        .hidden { display: none !important; }
+
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg); }
+        ::-webkit-scrollbar-thumb { background: #bdbdbd; border-radius: 4px; }
+
+        header {
+            background: var(--primary-dark); color: #fff;
+            position: sticky; top: 0; z-index: 1000;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+        .nav-wrapper { display: flex; align-items: center; justify-content: space-between; height: 64px; }
+        .logo { font-size: 1.4rem; font-weight: 700; display: flex; align-items: center; gap: 8px; cursor: pointer; }
+        .logo span { color: var(--accent); }
+        .logo .flag { font-size: 1.1rem; }
+        nav ul { display: flex; gap: 6px; }
+        nav ul li a, nav ul li button {
+            padding: 8px 16px; border-radius: 8px; cursor: pointer; transition: var(--transition);
+            font-weight: 500; font-size: 0.92rem; color: #fff; background: transparent;
+            display: flex; align-items: center; gap: 6px;
+        }
+        nav ul li a:hover, nav ul li button:hover { background: rgba(255,255,255,0.15); }
+        nav ul li a.active, nav ul li button.active { background: var(--primary-light); }
+        .nav-user { display: flex; align-items: center; gap: 12px; }
+        .nav-user .avatar {
+            width: 36px; height: 36px; border-radius: 50%; background: var(--accent);
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 700; font-size: 0.9rem; cursor: pointer; transition: var(--transition);
+        }
+        .nav-user .avatar:hover { transform: scale(1.1); }
+        .cart-btn {
+            position: relative; background: transparent; color: #fff; cursor: pointer;
+            font-size: 1.3rem; padding: 8px; border-radius: 8px; transition: var(--transition);
+        }
+        .cart-btn:hover { background: rgba(255,255,255,0.15); }
+        .cart-count {
+            position: absolute; top: 0; right: 0; background: var(--danger); color: #fff;
+            font-size: 0.65rem; width: 18px; height: 18px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center; font-weight: 700;
+        }
+        .hamburger { display: none; background: transparent; color: #fff; font-size: 1.6rem; cursor: pointer; padding: 4px; }
+        .auth-nav-btns { display: flex; gap: 6px; }
+        .auth-nav-btns .btn { padding: 8px 16px; font-size: 0.85rem; }
+
+        .user-menu-wrapper { position: relative; }
+        .user-dropdown {
+            position: absolute; top: 48px; right: 0; background: var(--card-bg);
+            border-radius: var(--radius); box-shadow: var(--shadow-lg);
+            min-width: 220px; padding: 8px 0; z-index: 1001;
+            opacity: 0; visibility: hidden; transform: translateY(-8px); transition: var(--transition);
+        }
+        .user-dropdown.open { opacity: 1; visibility: visible; transform: translateY(0); }
+        .user-dropdown .dropdown-header { padding: 12px 16px; border-bottom: 1px solid var(--border); }
+        .user-dropdown .dropdown-header h4 { color: var(--text); font-size: 0.95rem; }
+        .user-dropdown .dropdown-header p { color: var(--text-light); font-size: 0.8rem; }
+        .user-dropdown a, .user-dropdown button {
+            display: flex; align-items: center; gap: 10px; width: 100%; padding: 10px 16px;
+            color: var(--text); font-size: 0.9rem; background: none; cursor: pointer;
+            transition: var(--transition); text-align: left;
+        }
+        .user-dropdown a:hover, .user-dropdown button:hover { background: var(--bg); }
+        .user-dropdown .divider { height: 1px; background: var(--border); margin: 4px 0; }
+        .user-dropdown .logout-btn { color: var(--danger); }
+
+        @media (max-width: 768px) {
+            .hamburger { display: block; }
+            nav {
+                position: fixed; top: 64px; left: 0; right: 0; background: var(--primary-dark);
+                padding: 16px; transform: translateY(-120%); transition: var(--transition);
+                box-shadow: var(--shadow-lg); z-index: 999;
+            }
+            nav.open { transform: translateY(0); }
+            nav ul { flex-direction: column; }
+            nav ul li a, nav ul li button { padding: 12px 16px; }
+        }
+
+        .hero {
+            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 50%, var(--primary-light) 100%);
+            color: #fff; padding: 80px 20px; text-align: center; position: relative; overflow: hidden;
+        }
+        .hero::before {
+            content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 70%);
+            animation: heroFloat 15s infinite linear;
+        }
+        @keyframes heroFloat { 0%{transform:rotate(0deg)} 100%{transform:rotate(360deg)} }
+        .hero h1 { font-size: 2.8rem; font-weight: 800; margin-bottom: 16px; position: relative; }
+        .hero p { font-size: 1.2rem; opacity: 0.9; max-width: 650px; margin: 0 auto 32px; position: relative; }
+        .hero .arabic-sub { font-size: 1.1rem; opacity: 0.8; margin-bottom: 24px; position: relative; direction: rtl; }
+        .hero-actions { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; position: relative; }
+
+        .btn {
+            padding: 12px 28px; border-radius: 8px; font-weight: 600; cursor: pointer;
+            transition: var(--transition); display: inline-flex; align-items: center;
+            gap: 8px; font-size: 0.95rem; border: 2px solid transparent;
+        }
+        .btn-primary { background: var(--accent); color: #fff; }
+        .btn-primary:hover { background: var(--accent-dark); transform: translateY(-2px); }
+        .btn-secondary { background: transparent; color: #fff; border-color: #fff; }
+        .btn-secondary:hover { background: rgba(255,255,255,0.15); transform: translateY(-2px); }
+        .btn-success { background: var(--primary); color: #fff; }
+        .btn-success:hover { background: var(--primary-dark); }
+        .btn-danger { background: var(--danger); color: #fff; }
+        .btn-danger:hover { background: #b71c1c; }
+        .btn-outline { background: transparent; color: var(--primary); border-color: var(--primary); }
+        .btn-outline:hover { background: var(--primary); color: #fff; }
+        .btn-ghost { background: transparent; color: var(--text-light); }
+        .btn-ghost:hover { background: var(--bg); color: var(--text); }
+        .btn-sm { padding: 8px 16px; font-size: 0.85rem; }
+        .btn-block { width: 100%; justify-content: center; }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important; }
+
+        .impact-bar { background: var(--primary-dark); color: #fff; padding: 20px; }
+        .impact-stats { display: flex; justify-content: center; gap: 48px; flex-wrap: wrap; }
+        .impact-stat { text-align: center; }
+        .impact-stat .number { font-size: 1.8rem; font-weight: 800; color: var(--accent); }
+        .impact-stat .label { font-size: 0.85rem; opacity: 0.85; }
+
+        .section { padding: 48px 0; display: none; }
+        .section.active { display: block; }
+        .section-title { font-size: 1.8rem; font-weight: 700; margin-bottom: 8px; }
+        .section-subtitle { color: var(--text-light); margin-bottom: 32px; font-size: 1.05rem; }
+
+        .search-bar { display: flex; gap: 12px; margin-bottom: 32px; flex-wrap: wrap; }
+        .search-input {
+            flex: 1; min-width: 200px; padding: 12px 20px; border: 2px solid var(--border);
+            border-radius: 8px; background: var(--card-bg); transition: var(--transition); font-size: 0.95rem;
+        }
+        .search-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(46,125,50,0.1); }
+        .filter-select {
+            padding: 12px 16px; border: 2px solid var(--border); border-radius: 8px;
+            background: var(--card-bg); cursor: pointer; transition: var(--transition); min-width: 160px;
+        }
+        .filter-select:focus { border-color: var(--primary); }
+
+        .food-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 24px; }
+        .food-card {
+            background: var(--card-bg); border-radius: var(--radius); overflow: hidden;
+            box-shadow: var(--shadow); transition: var(--transition); display: flex; flex-direction: column;
+        }
+        .food-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
+        .food-card-img {
+            height: 180px; display: flex; align-items: center; justify-content: center;
+            font-size: 4rem; position: relative;
+        }
+        .food-card-img .badges { position: absolute; top: 12px; left: 12px; display: flex; gap: 6px; }
+        .food-card-img .time-left {
+            position: absolute; bottom: 12px; right: 12px; background: rgba(0,0,0,0.7);
+            color: #fff; padding: 4px 10px; border-radius: 6px; font-size: 0.75rem; font-weight: 600;
+        }
+        .food-card-img .location-badge {
+            position: absolute; top: 12px; right: 12px; background: rgba(0,0,0,0.7);
+            color: #fff; padding: 4px 10px; border-radius: 6px; font-size: 0.7rem; font-weight: 500;
+        }
+        .food-card-body { padding: 16px; flex: 1; display: flex; flex-direction: column; }
+        .food-card-body h3 { font-size: 1.1rem; margin-bottom: 4px; }
+        .food-card-body .vendor {
+            color: var(--text-light); font-size: 0.85rem; margin-bottom: 8px;
+            display: flex; align-items: center; gap: 4px;
+        }
+        .food-card-body .description { font-size: 0.9rem; color: var(--text-light); margin-bottom: 12px; flex: 1; }
+        .food-card-body .price-row {
+            display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;
+        }
+        .price-original { text-decoration: line-through; color: var(--text-light); font-size: 0.85rem; }
+        .price-discounted { font-size: 1.3rem; font-weight: 700; color: var(--primary); }
+        .food-card-actions { display: flex; gap: 8px; }
+        .food-card-actions .btn { flex: 1; justify-content: center; }
+
+        .form-container {
+            max-width: 600px; margin: 0 auto; background: var(--card-bg);
+            padding: 40px; border-radius: var(--radius); box-shadow: var(--shadow);
+        }
+        .form-container.wide { max-width: 800px; }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; font-weight: 600; margin-bottom: 6px; font-size: 0.9rem; }
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%; padding: 12px 16px; border: 2px solid var(--border);
+            border-radius: 8px; background: var(--bg); transition: var(--transition);
+        }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            border-color: var(--primary); box-shadow: 0 0 0 3px rgba(46,125,50,0.1); background: #fff;
+        }
+        .form-group textarea { resize: vertical; min-height: 100px; }
+        .form-group .error-msg { color: var(--danger); font-size: 0.8rem; margin-top: 4px; display: none; }
+        .form-group.has-error input, .form-group.has-error select, .form-group.has-error textarea { border-color: var(--danger); }
+        .form-group.has-error .error-msg { display: block; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        @media (max-width: 480px) { .form-row { grid-template-columns: 1fr; } .form-container { padding: 24px; } }
+        .form-divider {
+            text-align: center; margin: 24px 0; color: var(--text-light); position: relative;
+        }
+        .form-divider::before, .form-divider::after {
+            content: ''; position: absolute; top: 50%; width: 40%; height: 1px; background: var(--border);
+        }
+        .form-divider::before { left: 0; }
+        .form-divider::after { right: 0; }
+
+        .auth-container {
+            max-width: 440px; margin: 0 auto; background: var(--card-bg);
+            padding: 40px; border-radius: var(--radius); box-shadow: var(--shadow);
+        }
+        .auth-container h2 { text-align: center; margin-bottom: 8px; }
+        .auth-container .subtitle { text-align: center; color: var(--text-light); margin-bottom: 28px; font-size: 0.95rem; }
+        .auth-toggle { text-align: center; margin-top: 20px; color: var(--text-light); font-size: 0.9rem; }
+        .auth-toggle a { color: var(--primary); font-weight: 600; cursor: pointer; }
+        .auth-toggle a:hover { text-decoration: underline; }
+        .password-wrapper { position: relative; }
+        .password-wrapper input { padding-right: 48px; }
+        .toggle-password {
+            position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
+            background: none; cursor: pointer; font-size: 1.2rem; color: var(--text-light); transition: var(--transition);
+        }
+        .toggle-password:hover { color: var(--text); }
+        .password-strength { margin-top: 6px; }
+        .strength-bar { height: 4px; border-radius: 2px; background: var(--border); overflow: hidden; }
+        .strength-bar-fill { height: 100%; border-radius: 2px; transition: width 0.3s ease, background 0.3s ease; width: 0%; }
+        .strength-text { font-size: 0.75rem; margin-top: 3px; font-weight: 500; }
+        .strength-0 .strength-bar-fill { width:0%; background:var(--border); }
+        .strength-1 .strength-bar-fill { width:25%; background:var(--danger); }
+        .strength-2 .strength-bar-fill { width:50%; background:var(--accent); }
+        .strength-3 .strength-bar-fill { width:75%; background:#fdd835; }
+        .strength-4 .strength-bar-fill { width:100%; background:var(--primary); }
+        .checkbox-group { display: flex; align-items: center; gap: 10px; font-size: 0.9rem; color: var(--text-light); }
+        .checkbox-group input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--primary); cursor: pointer; }
+        .social-auth { display: flex; gap: 10px; margin-top: 16px; }
+        .social-btn {
+            flex: 1; padding: 10px; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 0.85rem;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+            transition: var(--transition); background: var(--bg); border: 2px solid var(--border); color: var(--text);
+        }
+        .social-btn:hover { border-color: var(--primary); background: #fff; }
+
+        .tabs {
+            display: flex; gap: 4px; margin-bottom: 24px; background: var(--bg);
+            padding: 4px; border-radius: 8px; overflow-x: auto;
+        }
+        .tab-btn {
+            padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: 500;
+            background: transparent; color: var(--text-light); transition: var(--transition); white-space: nowrap;
+        }
+        .tab-btn.active { background: var(--primary); color: #fff; }
+        .tab-btn:hover:not(.active) { background: var(--border); }
+
+        .cart-overlay {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.5); z-index: 2000; opacity: 0; visibility: hidden; transition: var(--transition);
+        }
+        .cart-overlay.open { opacity: 1; visibility: visible; }
+        .cart-panel {
+            position: fixed; top: 0; right: 0; bottom: 0; width: 400px; max-width: 90vw;
+            background: var(--card-bg); z-index: 2001; transform: translateX(100%);
+            transition: var(--transition); display: flex; flex-direction: column;
+        }
+        .cart-panel.open { transform: translateX(0); }
+        .cart-header {
+            padding: 20px; border-bottom: 1px solid var(--border);
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .cart-header h2 { font-size: 1.2rem; }
+        .cart-close { background: transparent; font-size: 1.5rem; cursor: pointer; color: var(--text-light); padding: 4px; }
+        .cart-items { flex: 1; overflow-y: auto; padding: 16px 20px; }
+        .cart-item {
+            display: flex; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--border); align-items: center;
+        }
+        .cart-item-emoji { font-size: 2rem; }
+        .cart-item-info { flex: 1; }
+        .cart-item-info h4 { font-size: 0.95rem; }
+        .cart-item-info .vendor { font-size: 0.8rem; color: var(--text-light); }
+        .cart-item-price { font-weight: 700; color: var(--primary); white-space: nowrap; }
+        .cart-item-remove { background: transparent; color: var(--danger); cursor: pointer; font-size: 1.2rem; padding: 4px; }
+        .cart-footer { padding: 20px; border-top: 1px solid var(--border); }
+        .cart-total { display: flex; justify-content: space-between; font-size: 1.2rem; font-weight: 700; margin-bottom: 16px; }
+        .cart-empty { text-align: center; padding: 40px 20px; color: var(--text-light); }
+        .cart-empty .icon { font-size: 3rem; margin-bottom: 12px; }
+        .qty-control { display: flex; align-items: center; gap: 4px; }
+        .qty-control button {
+            width: 32px; height: 32px; border-radius: 6px; background: var(--bg);
+            cursor: pointer; font-weight: 700; transition: var(--transition);
+            display: flex; align-items: center; justify-content: center;
+        }
+        .qty-control button:hover { background: var(--border); }
+        .qty-control span { min-width: 24px; text-align: center; font-weight: 600; }
+
+        .checkout-layout { display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 32px; align-items: start; }
+        @media (max-width: 768px) { .checkout-layout { grid-template-columns: 1fr; } }
+        .checkout-card {
+            background: var(--card-bg); border-radius: var(--radius); padding: 28px; box-shadow: var(--shadow);
+        }
+        .checkout-card h3 { font-size: 1.15rem; margin-bottom: 20px; display: flex; align-items: center; gap: 8px; }
+        .delivery-option { display: flex; gap: 12px; margin-bottom: 20px; }
+        .delivery-option-btn {
+            flex: 1; padding: 16px; border: 2px solid var(--border); border-radius: var(--radius);
+            background: var(--card-bg); cursor: pointer; text-align: center; transition: var(--transition);
+        }
+        .delivery-option-btn:hover { border-color: var(--primary-light); }
+        .delivery-option-btn.selected { border-color: var(--primary); background: #e8f5e9; }
+        .delivery-option-btn .icon { font-size: 2rem; margin-bottom: 6px; }
+        .delivery-option-btn .label { font-weight: 600; font-size: 0.95rem; }
+        .delivery-option-btn .sub { font-size: 0.8rem; color: var(--text-light); margin-top: 2px; }
+        .saved-address {
+            display: flex; align-items: center; gap: 12px; padding: 12px 16px;
+            border: 2px solid var(--border); border-radius: 8px; margin-bottom: 12px;
+            cursor: pointer; transition: var(--transition);
+        }
+        .saved-address:hover { border-color: var(--primary-light); }
+        .saved-address.selected { border-color: var(--primary); background: #e8f5e9; }
+        .saved-address .radio {
+            width: 20px; height: 20px; border-radius: 50%; border: 2px solid var(--border);
+            display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+        }
+        .saved-address.selected .radio { border-color: var(--primary); }
+        .saved-address.selected .radio::after { content: ''; width: 10px; height: 10px; border-radius: 50%; background: var(--primary); }
+        .order-summary-items { margin-bottom: 16px; }
+        .summary-item {
+            display: flex; justify-content: space-between; padding: 8px 0;
+            font-size: 0.9rem; border-bottom: 1px solid var(--bg);
+        }
+        .summary-item .name { display: flex; align-items: center; gap: 6px; }
+        .summary-row { display: flex; justify-content: space-between; padding: 6px 0; font-size: 0.9rem; }
+        .summary-row.total {
+            font-size: 1.15rem; font-weight: 700; padding-top: 12px;
+            margin-top: 8px; border-top: 2px solid var(--border);
+        }
+        .summary-row.savings { color: var(--primary); font-weight: 600; }
+        .summary-row.delivery-fee { color: var(--accent-dark); }
+        .delivery-eta {
+            display: flex; align-items: center; gap: 8px; padding: 12px 16px;
+            background: #e8f5e9; border-radius: 8px; margin-top: 16px;
+            font-size: 0.9rem; color: var(--primary-dark); font-weight: 500;
+        }
+        .payment-methods { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+        .pay-method-btn {
+            flex: 1; min-width: 100px; padding: 12px; border: 2px solid var(--border);
+            border-radius: 8px; background: var(--card-bg); cursor: pointer;
+            text-align: center; transition: var(--transition); font-size: 0.85rem;
+        }
+        .pay-method-btn:hover { border-color: var(--primary-light); }
+        .pay-method-btn.selected { border-color: var(--primary); background: #e8f5e9; }
+        .pay-method-btn .icon { font-size: 1.5rem; }
+
+        .checkout-stepper { display: flex; justify-content: center; gap: 0; margin-bottom: 32px; }
+        .step { display: flex; align-items: center; gap: 0; }
+        .step-circle {
+            width: 36px; height: 36px; border-radius: 50%; display: flex;
+            align-items: center; justify-content: center; font-weight: 700;
+            font-size: 0.85rem; border: 2px solid var(--border);
+            background: var(--card-bg); color: var(--text-light); transition: var(--transition);
+        }
+        .step.active .step-circle, .step.completed .step-circle { border-color: var(--primary); background: var(--primary); color: #fff; }
+        .step-label { font-size: 0.75rem; margin-top: 4px; text-align: center; color: var(--text-light); }
+        .step.active .step-label { color: var(--primary); font-weight: 600; }
+        .step-line { width: 60px; height: 2px; background: var(--border); margin: 0 8px; margin-bottom: 18px; }
+        .step.completed+.step-line, .step.active+.step-line { background: var(--primary); }
+        .step-content { display: flex; flex-direction: column; align-items: center; }
+
+        .donate-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 24px; }
+        .donate-card {
+            background: var(--card-bg); border-radius: var(--radius); padding: 24px;
+            box-shadow: var(--shadow); text-align: center; transition: var(--transition);
+        }
+        .donate-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
+        .donate-card .icon { font-size: 3rem; margin-bottom: 12px; }
+        .donate-card h3 { margin-bottom: 8px; }
+        .donate-card p { color: var(--text-light); font-size: 0.9rem; margin-bottom: 16px; }
+        .donate-amount-btns { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-bottom: 16px; }
+        .donate-amount-btn {
+            padding: 8px 20px; border-radius: 8px; border: 2px solid var(--primary);
+            background: transparent; color: var(--primary); cursor: pointer;
+            font-weight: 600; transition: var(--transition);
+        }
+        .donate-amount-btn:hover, .donate-amount-btn.selected { background: var(--primary); color: #fff; }
+        .progress-bar { background: var(--bg); border-radius: 10px; overflow: hidden; height: 10px; margin: 12px 0 8px; }
+        .progress-bar-fill {
+            height: 100%; background: linear-gradient(90deg, var(--primary), var(--primary-light));
+            border-radius: 10px; transition: width 0.8s ease;
+        }
+        .progress-text { font-size: 0.8rem; color: var(--text-light); }
+
+        .dashboard-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px; margin-bottom: 32px;
+        }
+        .dash-card { background: var(--card-bg); border-radius: var(--radius); padding: 24px; box-shadow: var(--shadow); }
+        .dash-card .icon { font-size: 2rem; margin-bottom: 8px; }
+        .dash-card .value { font-size: 2rem; font-weight: 800; color: var(--primary); }
+        .dash-card .label { color: var(--text-light); font-size: 0.9rem; }
+        .order-list { margin-top: 24px; }
+        .order-item {
+            background: var(--card-bg); border-radius: var(--radius); padding: 20px;
+            margin-bottom: 12px; box-shadow: var(--shadow);
+            display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+        }
+        .order-item .emoji { font-size: 2.5rem; }
+        .order-item .info { flex: 1; min-width: 200px; }
+        .order-item .info h4 { margin-bottom: 2px; }
+        .order-item .info p { font-size: 0.85rem; color: var(--text-light); }
+        .order-status { padding: 6px 14px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; }
+        .status-pending { background: #fff3e0; color: #e65100; }
+        .status-confirmed { background: #e8f5e9; color: #2e7d32; }
+        .status-collected { background: #e3f2fd; color: #1565c0; }
+        .status-delivering { background: #fff3e0; color: #e65100; }
+        .status-delivered { background: #e8f5e9; color: #2e7d32; }
+        .delivery-badge {
+            display: inline-flex; align-items: center; gap: 4px;
+            font-size: 0.75rem; padding: 3px 8px; border-radius: 4px;
+            background: #e3f2fd; color: #1565c0; font-weight: 500; margin-top: 4px;
+        }
+
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.6); z-index: 3000;
+            display: flex; align-items: center; justify-content: center; padding: 20px;
+            opacity: 0; visibility: hidden; transition: var(--transition);
+        }
+        .modal-overlay.open { opacity: 1; visibility: visible; }
+        .modal {
+            background: var(--card-bg); border-radius: var(--radius); padding: 32px;
+            max-width: 480px; width: 100%; max-height: 90vh; overflow-y: auto;
+            transform: scale(0.9); transition: var(--transition);
+        }
+        .modal-overlay.open .modal { transform: scale(1); }
+        .modal h2 { margin-bottom: 16px; text-align: center; }
+        .modal .icon { font-size: 3rem; text-align: center; margin-bottom: 12px; }
+
+        .toast-container {
+            position: fixed; bottom: 24px; right: 24px; z-index: 5000;
+            display: flex; flex-direction: column; gap: 8px;
+        }
+        .toast {
+            padding: 14px 24px; border-radius: 8px; color: #fff; font-weight: 500;
+            box-shadow: var(--shadow-lg); animation: toastIn 0.3s ease, toastOut 0.3s ease 2.7s forwards;
+            max-width: 360px; display: flex; align-items: center; gap: 8px;
+        }
+        .toast-success { background: var(--primary); }
+        .toast-error { background: var(--danger); }
+        .toast-info { background: #1565c0; }
+        @keyframes toastIn { from{transform:translateX(100%);opacity:0} to{transform:translateX(0);opacity:1} }
+        @keyframes toastOut { from{transform:translateX(0);opacity:1} to{transform:translateX(100%);opacity:0} }
+
+        footer { background: var(--primary-dark); color: #fff; padding: 40px 20px; margin-top: auto; }
+        .footer-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 32px; margin-bottom: 24px;
+        }
+        .footer-grid h3 { margin-bottom: 12px; color: var(--accent); font-size: 1rem; }
+        .footer-grid a, .footer-grid p {
+            display: block; color: rgba(255,255,255,0.7); font-size: 0.9rem;
+            margin-bottom: 6px; transition: var(--transition);
+        }
+        .footer-grid a:hover { color: #fff; }
+        .footer-bottom {
+            text-align: center; padding-top: 24px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            font-size: 0.85rem; color: rgba(255,255,255,0.5);
+        }
+
+        @keyframes fadeInUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+        .animate-in { animation: fadeInUp 0.5s ease; }
+        @keyframes fadeIn { from{opacity:0} to{opacity:1} }
+        .fade-in { animation: fadeIn 0.3s ease; }
+
+        @media (max-width: 600px) {
+            .hero h1 { font-size: 2rem; }
+            .hero p { font-size: 1rem; }
+            .impact-stats { gap: 24px; }
+            .food-grid { grid-template-columns: 1fr; }
+            .section-title { font-size: 1.4rem; }
+            .checkout-stepper { gap: 0; }
+            .step-line { width: 30px; }
+        }
+
+        .spinner {
+            display: inline-block; width: 20px; height: 20px;
+            border: 3px solid rgba(255,255,255,0.3); border-radius: 50%;
+            border-top-color: #fff; animation: spin 0.8s ease infinite;
+        }
+        @keyframes spin { to{transform:rotate(360deg)} }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="container">
+            <div class="nav-wrapper">
+                <div class="logo" onclick="navigate('home')">🍽️ Save<span>The</span>Plate <span class="flag">🇪🇬</span></div>
+                <button class="hamburger" onclick="toggleNav()" aria-label="Toggle navigation">☰</button>
+                <nav id="mainNav">
+                    <ul>
+                        <li><a href="#" class="nav-link active" data-page="home">🏠 Home</a></li>
+                        <li><a href="#" class="nav-link" data-page="browse">🛒 Browse</a></li>
+                        <li><a href="#" class="nav-link" data-page="donate">❤️ Donate</a></li>
+                        <li><a href="#" class="nav-link" data-page="list-food">➕ List Food</a></li>
+                        <li><a href="#" class="nav-link" data-page="dashboard">📊 Dashboard</a></li>
+                    </ul>
+                </nav>
+                <div class="nav-user" id="navUser">
+                    <button class="cart-btn" onclick="toggleCart()" aria-label="Shopping cart">
+                        🛒 <span class="cart-count" id="cartCount">0</span>
+                    </button>
+                    <div class="auth-nav-btns" id="authNavBtns">
+                        <button class="btn btn-sm btn-secondary" onclick="navigate('signin')">Sign In</button>
+                        <button class="btn btn-sm btn-primary" onclick="navigate('signup')">Sign Up</button>
+                    </div>
+                    <div class="user-menu-wrapper hidden" id="userMenuWrapper">
+                        <div class="avatar" id="userAvatar" onclick="toggleUserDropdown()" title="My Account">?</div>
+                        <div class="user-dropdown" id="userDropdown">
+                            <div class="dropdown-header">
+                                <h4 id="dropdownName">User</h4>
+                                <p id="dropdownEmail">user@email.com</p>
+                            </div>
+                            <a href="#" onclick="navigate('dashboard');closeUserDropdown();">📊 Dashboard</a>
+                            <a href="#" onclick="navigate('my-addresses');closeUserDropdown();">📍 My Addresses</a>
+                            <div class="divider"></div>
+                            <button class="logout-btn" onclick="handleLogout()">🚪 Sign Out</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <section class="hero" id="heroSection">
+        <div class="container">
+            <h1 class="animate-in">🇪🇬 Save Food. Save Money.<br>Save Egypt.</h1>
+            <p class="arabic-sub animate-in">قلل الهدر، وفّر أكتر — أنقذ الأكل وحافظ على بلدنا 🌱</p>
+            <p class="animate-in">Join thousands of Egyptians reducing food waste by rescuing surplus meals from local restaurants and stores at up to 70% off.</p>
+            <div class="hero-actions animate-in">
+                <button class="btn btn-primary" onclick="navigate('browse')">🛒 Browse Deals</button>
+                <button class="btn btn-secondary" onclick="navigate('donate')">❤️ Donate a Meal</button>
+            </div>
+        </div>
+    </section>
+
+    <div class="impact-bar">
+        <div class="container">
+            <div class="impact-stats">
+                <div class="impact-stat"><div class="number" id="statMeals">12,487</div><div class="label">Meals Saved in Egypt</div></div>
+                <div class="impact-stat"><div class="number" id="statCO2">8.2 tons</div><div class="label">CO₂ Prevented</div></div>
+                <div class="impact-stat"><div class="number" id="statDonated">3,210</div><div class="label">Meals Donated</div></div>
+                <div class="impact-stat"><div class="number" id="statVendors">156</div><div class="label">Egyptian Partners</div></div>
+            </div>
+        </div>
+    </div>
+
+    <main class="container">
+        <!-- HOME -->
+        <section class="section active" id="page-home">
+            <h2 class="section-title">🔥 Today's Top Picks in Egypt</h2>
+            <p class="section-subtitle">Grab these deals from Egyptian vendors before they're gone!</p>
+            <div class="food-grid" id="homeGrid"></div>
+        </section>
+
+        <!-- BROWSE -->
+        <section class="section" id="page-browse">
+            <h2 class="section-title">🛒 Browse All Deals</h2>
+            <p class="section-subtitle">Find surplus food near you across Egypt at amazing prices</p>
+            <div class="search-bar">
+                <input type="text" class="search-input" id="searchInput" placeholder="🔍 Search food, restaurants, cities..." oninput="filterFood()">
+                <select class="filter-select" id="categoryFilter" onchange="filterFood()">
+                    <option value="">All Categories</option>
+                    <option value="bakery">🥐 Bakery</option>
+                    <option value="restaurant">🍽️ Restaurant</option>
+                    <option value="grocery">🥬 Grocery</option>
+                    <option value="cafe">☕ Café</option>
+                    <option value="street-food">🧆 Street Food</option>
+                </select>
+                <select class="filter-select" id="cityFilter" onchange="filterFood()">
+                    <option value="">All Cities</option>
+                    <option value="Cairo">🏙️ Cairo</option>
+                    <option value="Giza">🔺 Giza</option>
+                    <option value="Alexandria">🌊 Alexandria</option>
+                    <option value="Mansoura">🌿 Mansoura</option>
+                    <option value="Hurghada">🏖️ Hurghada</option>
+                    <option value="Luxor">🏛️ Luxor</option>
+                </select>
+                <select class="filter-select" id="sortFilter" onchange="filterFood()">
+                    <option value="discount">Biggest Discount</option>
+                    <option value="price-low">Price: Low → High</option>
+                    <option value="price-high">Price: High → Low</option>
+                    <option value="expiring">Expiring Soon</option>
+                </select>
+            </div>
+            <div class="food-grid" id="browseGrid"></div>
+        </section>
+
+        <!-- SIGN IN -->
+        <section class="section" id="page-signin">
+            <div class="auth-container animate-in">
+                <div style="text-align:center;font-size:3rem;margin-bottom:8px;">🔐</div>
+                <h2>Welcome Back! أهلاً بيك</h2>
+                <p class="subtitle">Sign in to your SaveThePlate Egypt account</p>
+                <form id="signinForm" onsubmit="handleSignIn(event)">
+                    <div class="form-group"><label for="signinEmail">Email Address</label><input type="email" id="signinEmail" placeholder="you@example.com" required autocomplete="email"><div class="error-msg">Please enter a valid email address.</div></div>
+                    <div class="form-group"><label for="signinPassword">Password</label><div class="password-wrapper"><input type="password" id="signinPassword" placeholder="Enter your password" required autocomplete="current-password"><button type="button" class="toggle-password" onclick="togglePasswordVis('signinPassword',this)">👁️</button></div><div class="error-msg">Password is required.</div></div>
+                    <div class="checkbox-group mb-2"><input type="checkbox" id="rememberMe"><label for="rememberMe" style="font-weight:400;margin-bottom:0;">Remember me</label></div>
+                    <button type="submit" class="btn btn-success btn-block">🔑 Sign In</button>
+                </form>
+                <div class="form-divider">or</div>
+                <div class="social-auth">
+                    <button class="social-btn" onclick="socialAuth('Google')"><span class="icon">🔷</span> Google</button>
+                    <button class="social-btn" onclick="socialAuth('Apple')"><span class="icon">🍎</span> Apple</button>
+                </div>
+                <div class="auth-toggle">Don't have an account? <a onclick="navigate('signup')">Sign Up</a></div>
+            </div>
+        </section>
+
+        <!-- SIGN UP -->
+        <section class="section" id="page-signup">
+            <div class="auth-container animate-in">
+                <div style="text-align:center;font-size:3rem;margin-bottom:8px;">🇪🇬</div>
+                <h2>Join SaveThePlate Egypt</h2>
+                <p class="subtitle">Create an account and start saving food today — انضم لينا</p>
+                <form id="signupForm" onsubmit="handleSignUp(event)">
+                    <div class="form-row">
+                        <div class="form-group"><label for="signupFirst">First Name</label><input type="text" id="signupFirst" placeholder="Ahmed" required maxlength="50" autocomplete="given-name"><div class="error-msg">First name is required.</div></div>
+                        <div class="form-group"><label for="signupLast">Last Name</label><input type="text" id="signupLast" placeholder="Hassan" required maxlength="50" autocomplete="family-name"><div class="error-msg">Last name is required.</div></div>
+                    </div>
+                    <div class="form-group"><label for="signupEmail">Email Address</label><input type="email" id="signupEmail" placeholder="you@example.com" required autocomplete="email"><div class="error-msg">Please enter a valid email address.</div></div>
+                    <div class="form-group"><label for="signupPhone">Phone Number (Egypt)</label><input type="tel" id="signupPhone" placeholder="+20 10X XXX XXXX" autocomplete="tel"><div class="error-msg">Please enter a valid Egyptian phone number.</div></div>
+                    <div class="form-group"><label for="signupCity">City</label><select id="signupCity"><option value="">Select your city</option><option value="Cairo">Cairo - القاهرة</option><option value="Giza">Giza - الجيزة</option><option value="Alexandria">Alexandria - الإسكندرية</option><option value="Mansoura">Mansoura - المنصورة</option><option value="Tanta">Tanta - طنطا</option><option value="Hurghada">Hurghada - الغردقة</option><option value="Luxor">Luxor - الأقصر</option><option value="Aswan">Aswan - أسوان</option><option value="Port Said">Port Said - بورسعيد</option><option value="Suez">Suez - السويس</option><option value="Ismailia">Ismailia - الإسماعيلية</option></select></div>
+                    <div class="form-group"><label for="signupPassword">Password</label><div class="password-wrapper"><input type="password" id="signupPassword" placeholder="Create a strong password" required minlength="8" autocomplete="new-password" oninput="checkPasswordStrength(this.value)"><button type="button" class="toggle-password" onclick="togglePasswordVis('signupPassword',this)">👁️</button></div><div class="password-strength" id="passwordStrength"><div class="strength-bar"><div class="strength-bar-fill"></div></div><div class="strength-text"></div></div><div class="error-msg">Password must be at least 8 characters.</div></div>
+                    <div class="form-group"><label for="signupConfirm">Confirm Password</label><div class="password-wrapper"><input type="password" id="signupConfirm" placeholder="Re-enter your password" required autocomplete="new-password"><button type="button" class="toggle-password" onclick="togglePasswordVis('signupConfirm',this)">👁️</button></div><div class="error-msg">Passwords do not match.</div></div>
+                    <div class="checkbox-group mb-2"><input type="checkbox" id="agreeTerms" required><label for="agreeTerms" style="font-weight:400;margin-bottom:0;">I agree to the <a href="#" style="color:var(--primary);font-weight:600;">Terms of Service</a> & <a href="#" style="color:var(--primary);font-weight:600;">Privacy Policy</a></label></div>
+                    <button type="submit" class="btn btn-success btn-block">🇪🇬 Create Account</button>
+                </form>
+                <div class="form-divider">or</div>
+                <div class="social-auth">
+                    <button class="social-btn" onclick="socialAuth('Google')"><span class="icon">🔷</span> Google</button>
+                    <button class="social-btn" onclick="socialAuth('Apple')"><span class="icon">🍎</span> Apple</button>
+                </div>
+                <div class="auth-toggle">Already have an account? <a onclick="navigate('signin')">Sign In</a></div>
+            </div>
+        </section>
+
+        <!-- CHECKOUT -->
+        <section class="section" id="page-checkout">
+            <h2 class="section-title text-center">🧾 Checkout</h2>
+            <p class="section-subtitle text-center">Complete your order and save food from going to waste!</p>
+            <div class="checkout-stepper" id="checkoutStepper">
+                <div class="step active" data-step="1"><div class="step-content"><div class="step-circle">1</div><div class="step-label">Delivery</div></div></div>
+                <div class="step-line"></div>
+                <div class="step" data-step="2"><div class="step-content"><div class="step-circle">2</div><div class="step-label">Payment</div></div></div>
+                <div class="step-line"></div>
+                <div class="step" data-step="3"><div class="step-content"><div class="step-circle">3</div><div class="step-label">Confirm</div></div></div>
+            </div>
+
+            <div id="checkoutStep1" class="checkout-layout fade-in">
+                <div class="checkout-card">
+                    <h3>📦 How would you like to receive your order?</h3>
+                    <div class="delivery-option">
+                        <div class="delivery-option-btn selected" onclick="selectDeliveryType('pickup',this)">
+                            <div class="icon">🏪</div><div class="label">Pickup</div><div class="sub">Free · Ready in 15 min</div>
+                        </div>
+                        <div class="delivery-option-btn" onclick="selectDeliveryType('delivery',this)">
+                            <div class="icon">🛵</div><div class="label">Delivery</div><div class="sub">25 EGP · 30-50 min</div>
+                        </div>
+                    </div>
+                    <div id="deliveryAddressSection" class="hidden">
+                        <h3>📍 Delivery Address (Egypt Only)</h3>
+                        <div id="savedAddressesList"></div>
+                        <button class="btn btn-outline btn-sm mb-2" onclick="toggleNewAddressForm()" id="toggleNewAddrBtn">➕ Add New Address</button>
+                        <div id="newAddressForm" class="hidden">
+                            <div class="form-group"><label for="addrLabel">Address Label</label><input type="text" id="addrLabel" placeholder="e.g. Home, Work, etc." maxlength="30"></div>
+                            <div class="form-group"><label for="addrStreet">Street Address *</label><input type="text" id="addrStreet" placeholder="12 شارع التحرير، الدور ٣" maxlength="200"><div class="error-msg">Please enter your street address.</div></div>
+                            <div class="form-row">
+                                <div class="form-group"><label for="addrDistrict">District / Area *</label><input type="text" id="addrDistrict" placeholder="e.g. Zamalek, Maadi, Smouha" maxlength="100"><div class="error-msg">Please enter your district.</div></div>
+                                <div class="form-group"><label for="addrCity">City *</label><select id="addrCity"><option value="">Select city</option><option value="Cairo">Cairo</option><option value="Giza">Giza</option><option value="Alexandria">Alexandria</option><option value="Mansoura">Mansoura</option><option value="Tanta">Tanta</option><option value="Hurghada">Hurghada</option><option value="Luxor">Luxor</option><option value="Aswan">Aswan</option><option value="Port Said">Port Said</option><option value="Suez">Suez</option><option value="Ismailia">Ismailia</option><option value="Fayoum">Fayoum</option><option value="Sharm El Sheikh">Sharm El Sheikh</option></select><div class="error-msg">Please select your city.</div></div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group"><label for="addrGov">Governorate *</label><select id="addrGov"><option value="">Select governorate</option><option value="Cairo">Cairo - القاهرة</option><option value="Giza">Giza - الجيزة</option><option value="Alexandria">Alexandria - الإسكندرية</option><option value="Dakahlia">Dakahlia - الدقهلية</option><option value="Gharbia">Gharbia - الغربية</option><option value="Red Sea">Red Sea - البحر الأحمر</option><option value="Luxor">Luxor - الأقصر</option><option value="Aswan">Aswan - أسوان</option><option value="Port Said">Port Said - بورسعيد</option><option value="Suez">Suez - السويس</option><option value="Ismailia">Ismailia - الإسماعيلية</option><option value="Fayoum">Fayoum - الفيوم</option><option value="South Sinai">South Sinai - جنوب سيناء</option></select><div class="error-msg">Please select your governorate.</div></div>
+                                <div class="form-group"><label for="addrPhone">Contact Phone *</label><input type="tel" id="addrPhone" placeholder="+20 1XX XXX XXXX" maxlength="20"><div class="error-msg">Please enter a valid Egyptian phone.</div></div>
+                            </div>
+                            <div class="form-group"><label for="addrNotes">Delivery Instructions</label><textarea id="addrNotes" placeholder="e.g. Building 5, beside the mosque, blue gate, floor 3..." maxlength="300" style="min-height:60px;"></textarea></div>
+                            <div class="checkbox-group mb-2"><input type="checkbox" id="saveAddress" checked><label for="saveAddress" style="font-weight:400;margin-bottom:0;">Save this address for future orders</label></div>
+                            <button type="button" class="btn btn-success btn-sm" onclick="saveNewAddress()">💾 Save Address</button>
+                        </div>
+                    </div>
+                    <div class="mt-3" style="display:flex;gap:12px;"><button class="btn btn-ghost" onclick="navigate('browse')">← Back to Browse</button><button class="btn btn-success" onclick="goToCheckoutStep(2)">Continue to Payment →</button></div>
+                </div>
+                <div class="checkout-card"><h3>🧾 Order Summary</h3><div id="checkoutSummaryItems1"></div><div id="checkoutSummaryTotals1"></div></div>
+            </div>
+
+            <div id="checkoutStep2" class="checkout-layout hidden">
+                <div class="checkout-card fade-in">
+                    <h3>💳 Payment Method</h3>
+                    <div class="payment-methods">
+                        <div class="pay-method-btn selected" onclick="selectPayment('card',this)"><div class="icon">💳</div><div>Card</div></div>
+                        <div class="pay-method-btn" onclick="selectPayment('vodafone-cash',this)"><div class="icon">📱</div><div>Vodafone Cash</div></div>
+                        <div class="pay-method-btn" onclick="selectPayment('fawry',this)"><div class="icon">🏪</div><div>Fawry</div></div>
+                        <div class="pay-method-btn" onclick="selectPayment('cod',this)"><div class="icon">💵</div><div>Cash (COD)</div></div>
+                    </div>
+                    <div id="cardPaymentForm">
+                        <div class="form-group"><label for="cardName">Cardholder Name</label><input type="text" id="cardName" placeholder="Ahmed Hassan" maxlength="100" autocomplete="cc-name"><div class="error-msg">Please enter the cardholder name.</div></div>
+                        <div class="form-group"><label for="cardNumber">Card Number</label><input type="text" id="cardNumber" placeholder="1234 5678 9012 3456" maxlength="19" autocomplete="cc-number" oninput="formatCardNumber(this)"><div class="error-msg">Please enter a valid card number.</div></div>
+                        <div class="form-row">
+                            <div class="form-group"><label for="cardExpiry">Expiry Date</label><input type="text" id="cardExpiry" placeholder="MM/YY" maxlength="5" autocomplete="cc-exp" oninput="formatExpiry(this)"><div class="error-msg">Enter a valid expiry date.</div></div>
+                            <div class="form-group"><label for="cardCVC">CVC</label><input type="text" id="cardCVC" placeholder="123" maxlength="4" autocomplete="cc-csc"><div class="error-msg">Enter a valid CVC.</div></div>
+                        </div>
+                    </div>
+                    <div id="altPaymentMsg" class="hidden text-center" style="padding:24px;color:var(--text-light);">
+                        <div style="font-size:3rem;margin-bottom:8px;" id="altPayIcon">📱</div>
+                        <p id="altPayText">You will receive a Vodafone Cash payment request on your phone.</p>
+                    </div>
+                    <div class="mt-3" style="display:flex;gap:12px;"><button class="btn btn-ghost" onclick="goToCheckoutStep(1)">← Back</button><button class="btn btn-success" onclick="goToCheckoutStep(3)">Review Order →</button></div>
+                </div>
+                <div class="checkout-card"><h3>🧾 Order Summary</h3><div id="checkoutSummaryItems2"></div><div id="checkoutSummaryTotals2"></div></div>
+            </div>
+
+            <div id="checkoutStep3" class="hidden">
+                <div class="checkout-layout fade-in">
+                    <div class="checkout-card">
+                        <h3>✅ Review & Confirm</h3>
+                        <div style="margin-bottom:20px;"><h4 style="font-size:0.9rem;color:var(--text-light);margin-bottom:8px;">📦 Fulfillment</h4><div id="reviewFulfillment" style="padding:12px 16px;background:var(--bg);border-radius:8px;font-size:0.9rem;"></div></div>
+                        <div style="margin-bottom:20px;"><h4 style="font-size:0.9rem;color:var(--text-light);margin-bottom:8px;">💳 Payment</h4><div id="reviewPayment" style="padding:12px 16px;background:var(--bg);border-radius:8px;font-size:0.9rem;"></div></div>
+                        <div id="reviewItems" style="margin-bottom:20px;"></div>
+                        <div class="delivery-eta" id="reviewEta">⏰ Estimated ready for pickup in 15 minutes</div>
+                        <div class="mt-3" style="display:flex;gap:12px;"><button class="btn btn-ghost" onclick="goToCheckoutStep(2)">← Back</button><button class="btn btn-success btn-block" onclick="placeOrder()" id="placeOrderBtn">🎉 Place Order</button></div>
+                    </div>
+                    <div class="checkout-card"><h3>🧾 Order Total</h3><div id="checkoutSummaryItems3"></div><div id="checkoutSummaryTotals3"></div></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- DONATE -->
+        <section class="section" id="page-donate">
+            <h2 class="section-title text-center">❤️ Donate a Meal — تبرع بوجبة</h2>
+            <p class="section-subtitle text-center">Help redirect surplus food to Egyptian shelters and food banks</p>
+            <div class="donate-cards" id="donateGrid"></div>
+        </section>
+
+        <!-- LIST FOOD -->
+        <section class="section" id="page-list-food">
+            <h2 class="section-title text-center">➕ List Surplus Food</h2>
+            <p class="section-subtitle text-center">Are you an Egyptian restaurant or store? List your surplus food here.</p>
+            <div class="form-container">
+                <form id="listFoodForm" onsubmit="handleListFood(event)">
+                    <div class="form-group"><label for="foodName">Food Item Name *</label><input type="text" id="foodName" placeholder="e.g. Assorted Feteer Box" required maxlength="100"><div class="error-msg">Please enter a valid food item name.</div></div>
+                    <div class="form-group"><label for="vendorName">Business Name *</label><input type="text" id="vendorName" placeholder="e.g. El Dahan Restaurant" required maxlength="100"><div class="error-msg">Please enter your business name.</div></div>
+                    <div class="form-row">
+                        <div class="form-group"><label for="foodCategory">Category *</label><select id="foodCategory" required><option value="">Select category</option><option value="bakery">🥐 Bakery</option><option value="restaurant">🍽️ Restaurant</option><option value="grocery">🥬 Grocery</option><option value="cafe">☕ Café</option><option value="street-food">🧆 Street Food</option></select><div class="error-msg">Please select a category.</div></div>
+                        <div class="form-group"><label for="vendorCity">City *</label><select id="vendorCity" required><option value="">Select city</option><option value="Cairo">Cairo</option><option value="Giza">Giza</option><option value="Alexandria">Alexandria</option><option value="Mansoura">Mansoura</option><option value="Tanta">Tanta</option><option value="Hurghada">Hurghada</option><option value="Luxor">Luxor</option></select><div class="error-msg">Please select a city.</div></div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group"><label for="foodQuantity">Quantity Available *</label><input type="number" id="foodQuantity" placeholder="e.g. 10" required min="1" max="500"><div class="error-msg">Enter a valid quantity (1-500).</div></div>
+                        <div class="form-group"><label></label><span style="font-size:0.85rem;color:var(--text-light);display:block;margin-top:12px;">📍 Available across Egypt only</span></div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group"><label for="originalPrice">Original Price (EGP) *</label><input type="number" id="originalPrice" placeholder="e.g. 150" required min="1" step="1" max="10000"><div class="error-msg">Enter a valid price.</div></div>
+                        <div class="form-group"><label for="discountedPrice">Discounted Price (EGP) *</label><input type="number" id="discountedPrice" placeholder="e.g. 55" required min="1" step="1" max="10000"><div class="error-msg">Discounted price must be less than original.</div></div>
+                    </div>
+                    <div class="form-group"><label for="foodDescription">Description</label><textarea id="foodDescription" placeholder="Describe the food items, dietary info, allergens..." maxlength="500"></textarea></div>
+                    <div class="form-row">
+                        <div class="form-group"><label for="pickupStart">Pickup Start Time *</label><input type="time" id="pickupStart" required><div class="error-msg">Please set a pickup start time.</div></div>
+                        <div class="form-group"><label for="pickupEnd">Pickup End Time *</label><input type="time" id="pickupEnd" required><div class="error-msg">End time must be after start time.</div></div>
+                    </div>
+                    <div class="form-group"><label>Choose an Icon</label><div class="tabs" id="emojiPicker"><button type="button" class="tab-btn active" onclick="selectEmoji(this,'🥐')">🥐</button><button type="button" class="tab-btn" onclick="selectEmoji(this,'🍕')">🍕</button><button type="button" class="tab-btn" onclick="selectEmoji(this,'🥗')">🥗</button><button type="button" class="tab-btn" onclick="selectEmoji(this,'🍱')">🍱</button><button type="button" class="tab-btn" onclick="selectEmoji(this,'☕')">☕</button><button type="button" class="tab-btn" onclick="selectEmoji(this,'🧆')">🧆</button><button type="button" class="tab-btn" onclick="selectEmoji(this,'🍰')">🍰</button><button type="button" class="tab-btn" onclick="selectEmoji(this,'🥬')">🥬</button><button type="button" class="tab-btn" onclick="selectEmoji(this,'🍲')">🍲</button><button type="button" class="tab-btn" onclick="selectEmoji(this,'🫓')">🫓</button></div></div>
+                    <button type="submit" class="btn btn-success btn-block">➕ List Food Item</button>
+                </form>
+            </div>
+        </section>
+
+        <!-- MY ADDRESSES -->
+        <section class="section" id="page-my-addresses">
+            <h2 class="section-title">📍 My Saved Addresses</h2>
+            <p class="section-subtitle">Manage your Egyptian delivery addresses</p>
+            <div class="form-container wide">
+                <div id="manageAddressesList"></div>
+                <div class="mt-3"><button class="btn btn-outline" onclick="toggleManageNewAddr()">➕ Add New Address</button></div>
+                <div id="manageNewAddrForm" class="hidden mt-3">
+                    <div class="form-group"><label>Label</label><input type="text" id="mAddrLabel" placeholder="e.g. Home" maxlength="30"></div>
+                    <div class="form-group"><label>Street Address *</label><input type="text" id="mAddrStreet" placeholder="12 Tahrir St" maxlength="200"><div class="error-msg">Required.</div></div>
+                    <div class="form-row">
+                        <div class="form-group"><label>District *</label><input type="text" id="mAddrDistrict" placeholder="e.g. Zamalek" maxlength="100"><div class="error-msg">Required.</div></div>
+                        <div class="form-group"><label>City *</label><select id="mAddrCity"><option value="">Select city</option><option value="Cairo">Cairo</option><option value="Giza">Giza</option><option value="Alexandria">Alexandria</option><option value="Mansoura">Mansoura</option><option value="Hurghada">Hurghada</option><option value="Luxor">Luxor</option></select><div class="error-msg">Required.</div></div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group"><label>Governorate *</label><select id="mAddrGov"><option value="">Select</option><option value="Cairo">Cairo</option><option value="Giza">Giza</option><option value="Alexandria">Alexandria</option><option value="Dakahlia">Dakahlia</option><option value="Red Sea">Red Sea</option><option value="Luxor">Luxor</option></select><div class="error-msg">Required.</div></div>
+                        <div class="form-group"><label>Phone *</label><input type="tel" id="mAddrPhone" placeholder="+20 1XX XXX XXXX" maxlength="20"><div class="error-msg">Required.</div></div>
+                    </div>
+                    <button type="button" class="btn btn-success btn-sm" onclick="saveManageAddress()">💾 Save Address</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- DASHBOARD -->
+        <section class="section" id="page-dashboard">
+            <h2 class="section-title">📊 My Dashboard</h2>
+            <p class="section-subtitle">Track your impact across Egypt</p>
+            <div class="dashboard-grid">
+                <div class="dash-card"><div class="icon">🛒</div><div class="value" id="dashOrders">0</div><div class="label">Orders Placed</div></div>
+                <div class="dash-card"><div class="icon">🍽️</div><div class="value" id="dashMeals">0</div><div class="label">Meals Saved</div></div>
+                <div class="dash-card"><div class="icon">💰</div><div class="value" id="dashSaved">0 EGP</div><div class="label">Money Saved</div></div>
+                <div class="dash-card"><div class="icon">🌍</div><div class="value" id="dashCO2">0 kg</div><div class="label">CO₂ Prevented</div></div>
+            </div>
+            <h3>📜 Order History</h3>
+            <div class="order-list" id="orderList"><div class="cart-empty"><div class="icon">📦</div><p>No orders yet. Start saving food!</p></div></div>
+        </section>
+    </main>
+
+    <div class="cart-overlay" id="cartOverlay" onclick="toggleCart()"></div>
+    <div class="cart-panel" id="cartPanel">
+        <div class="cart-header"><h2>🛒 Your Cart</h2><button class="cart-close" onclick="toggleCart()">✕</button></div>
+        <div class="cart-items" id="cartItems"><div class="cart-empty"><div class="icon">🛒</div><p>Your cart is empty.<br>Start rescuing food!</p></div></div>
+        <div class="cart-footer" id="cartFooter" style="display:none;">
+            <div class="cart-total"><span>Total</span><span id="cartTotal">0 EGP</span></div>
+            <button class="btn btn-success btn-block" onclick="goToCheckout()">✅ Proceed to Checkout</button>
+            <button class="btn btn-outline btn-block mt-1" onclick="clearCart()">🗑️ Clear Cart</button>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="successModal">
+        <div class="modal">
+            <div class="icon" id="modalIcon">🎉</div>
+            <h2 id="modalTitle">Order Confirmed!</h2>
+            <p class="text-center" id="modalMsg">Thank you for saving food!</p>
+            <div class="mt-3 text-center"><button class="btn btn-success" onclick="closeModal()">Got it! تمام</button></div>
+        </div>
+    </div>
+
+    <div class="toast-container" id="toastContainer"></div>
+
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div><h3>🍽️ SaveThePlate Egypt 🇪🇬</h3><p>Reducing food waste across Egypt, one meal at a time. قلل الهدر، وفّر أكتر</p></div>
+                <div><h3>Quick Links</h3><a href="#" onclick="navigate('browse')">Browse Deals</a><a href="#" onclick="navigate('donate')">Donate a Meal</a><a href="#" onclick="navigate('list-food')">List Your Food</a><a href="#" onclick="navigate('dashboard')">Dashboard</a></div>
+                <div><h3>Egypt Cities</h3><a href="#">🏙️ Cairo</a><a href="#">🌊 Alexandria</a><a href="#">🔺 Giza</a><a href="#">🏖️ Hurghada</a><a href="#">🏛️ Luxor</a></div>
+                <div><h3>Support</h3><a href="#">Help Center</a><a href="#">Contact: support@savetheplate.eg</a><a href="#">📞 16XXX (Egypt Hotline)</a><a href="#">Privacy Policy</a></div>
+            </div>
+            <div class="footer-bottom"><p>© 2025 SaveThePlate Egypt. Built with 💚 for Egypt and the planet. All prices in Egyptian Pounds (EGP).</p></div>
+        </div>
+    </footer>
+
+    <script>
+        const SK = { CART:'stp_eg_cart', ORDERS:'stp_eg_orders', LISTINGS:'stp_eg_listings', DONATIONS:'stp_eg_donations', USER:'stp_eg_user', ADDRESSES:'stp_eg_addresses', USERS_DB:'stp_eg_users_db' };
+        const CURRENCY = 'EGP';
+        const DELIVERY_FEE = 25;
+
+        function loadData(k,f=null){try{const d=localStorage.getItem(k);return d?JSON.parse(d):f;}catch(e){return f;}}
+        function saveData(k,d){try{localStorage.setItem(k,JSON.stringify(d));}catch(e){showToast('Storage error.','error');}}
+
+        function egp(amount){return `${Number(amount).toLocaleString('en-EG')} EGP`;}
+
+        const sampleFoods = [
+            {id:1,name:"Feteer Meshaltet Box",vendor:"El Dahan",category:"bakery",emoji:"🫓",originalPrice:180,discountedPrice:65,quantity:8,description:"Assorted feteer meshaltet — plain, cheese, and mixed. Fresh from the oven.",pickupStart:"17:00",pickupEnd:"19:00",hoursLeft:3,city:"Cairo",district:"Downtown"},
+            {id:2,name:"Koshari Family Pot",vendor:"Abou Tarek",category:"restaurant",emoji:"🍲",originalPrice:120,discountedPrice:45,quantity:10,description:"Large pot of authentic Egyptian koshari with all toppings. Feeds 3-4 people.",pickupStart:"13:00",pickupEnd:"15:00",hoursLeft:2,city:"Cairo",district:"Champollion St"},
+            {id:3,name:"Organic Veggie Box",vendor:"Imtenan Organic Market",category:"grocery",emoji:"🥬",originalPrice:200,discountedPrice:70,quantity:12,description:"Seasonal organic vegetables from Egyptian farms: tomatoes, molokhia, bamia, peppers.",pickupStart:"18:00",pickupEnd:"20:00",hoursLeft:4,city:"Cairo",district:"Maadi"},
+            {id:4,name:"Grilled Kofta & Kebab Platter",vendor:"El Prince",category:"restaurant",emoji:"🍖",originalPrice:280,discountedPrice:99,quantity:5,description:"Mixed grilled kofta, kebab, with tahini, salad, and fresh baladi bread.",pickupStart:"20:00",pickupEnd:"22:00",hoursLeft:6,city:"Giza",district:"Haram"},
+            {id:5,name:"Alexandrian Pastry Pack",vendor:"Mohamed Ahmed",category:"bakery",emoji:"🥐",originalPrice:150,discountedPrice:55,quantity:7,description:"Assorted Alexandrian pastries: sambousek, spring rolls, and cheese börek.",pickupStart:"16:00",pickupEnd:"18:00",hoursLeft:3,city:"Alexandria",district:"Raml Station"},
+            {id:6,name:"Ta'meya & Foul Breakfast Pack",vendor:"Gad Restaurant",category:"street-food",emoji:"🧆",originalPrice:90,discountedPrice:30,quantity:15,description:"20 pieces of fresh ta'meya + large foul medames pot with pickles and bread.",pickupStart:"07:00",pickupEnd:"10:00",hoursLeft:1,city:"Cairo",district:"Dokki"},
+            {id:7,name:"Konafa & Basbousa Tray",vendor:"El Abd Patisserie",category:"bakery",emoji:"🍰",originalPrice:250,discountedPrice:90,quantity:4,description:"Large tray of mixed konafa and basbousa — perfect for family gatherings.",pickupStart:"19:00",pickupEnd:"21:00",hoursLeft:5,city:"Cairo",district:"Heliopolis"},
+            {id:8,name:"Fresh Seafood Box",vendor:"Fish Market",category:"restaurant",emoji:"🐟",originalPrice:350,discountedPrice:130,quantity:3,description:"Grilled shrimp, calamari, and seabass with rice and salad from Alexandria's finest.",pickupStart:"14:00",pickupEnd:"16:00",hoursLeft:2,city:"Alexandria",district:"Anfushi"},
+            {id:9,name:"Mahshi Mixed Pot",vendor:"Bab El Hadid Kitchen",category:"restaurant",emoji:"🍲",originalPrice:160,discountedPrice:55,quantity:6,description:"Stuffed peppers, vine leaves, and zucchini with tomato sauce. Homestyle cooking.",pickupStart:"12:00",pickupEnd:"14:30",hoursLeft:3,city:"Mansoura",district:"City Center"},
+            {id:10,name:"Sahlab & Drinks Pack",vendor:"Grand Café",category:"cafe",emoji:"☕",originalPrice:130,discountedPrice:45,quantity:9,description:"2 sahlab cups + 2 fresh juices (mango & guava) — perfect Egyptian winter treat.",pickupStart:"17:00",pickupEnd:"19:30",hoursLeft:4,city:"Cairo",district:"Zamalek"},
+            {id:11,name:"Molokhia & Chicken Set",vendor:"Koshary Hind",category:"restaurant",emoji:"🍗",originalPrice:190,discountedPrice:70,quantity:5,description:"Molokhia soup with grilled chicken, rice, and fresh Egyptian bread.",pickupStart:"13:00",pickupEnd:"15:00",hoursLeft:2,city:"Giza",district:"6th of October"},
+            {id:12,name:"Fruit Crate - Mango Season",vendor:"Fathalla Market",category:"grocery",emoji:"🥭",originalPrice:220,discountedPrice:80,quantity:8,description:"5 kg of premium Ismailia mangoes approaching peak ripeness. Don't let them go to waste!",pickupStart:"10:00",pickupEnd:"14:00",hoursLeft:5,city:"Hurghada",district:"Downtown"}
+        ];
+
+        const shelters = [
+            {id:1,name:"Egyptian Food Bank (بنك الطعام المصري)",icon:"🏦",description:"Egypt's leading food bank serving millions across all governorates. Every donation counts.",goal:50000,raised:34200,mealsProvided:102600},
+            {id:2,name:"Resala Charity (جمعية رسالة)",icon:"🤲",description:"Distributing meals to orphanages, hospitals, and underserved communities across Egypt.",goal:75000,raised:52000,mealsProvided:156000},
+            {id:3,name:"Misr El Kheir Foundation (مصر الخير)",icon:"🇪🇬",description:"Supporting Egyptian families with food aid, especially during Ramadan and winter.",goal:100000,raised:67800,mealsProvided:203400}
+        ];
+
+        let state = {
+            currentPage:'home', cart:loadData(SK.CART,[]), orders:loadData(SK.ORDERS,[]),
+            userListings:loadData(SK.LISTINGS,[]), donations:loadData(SK.DONATIONS,[]),
+            user:loadData(SK.USER,null), addresses:loadData(SK.ADDRESSES,[]),
+            foods:[...sampleFoods,...loadData(SK.LISTINGS,[])],
+            selectedEmoji:'🥐', checkoutStep:1, deliveryType:'pickup',
+            selectedAddressId:null, paymentMethod:'card'
+        };
+
+        function sanitize(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML;}
+        function validateEmail(e){return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e);}
+        function validatePrice(o,d){return !isNaN(o)&&!isNaN(d)&&d>0&&o>0&&d<o;}
+        function hashPassword(p){let h=0;for(let i=0;i<p.length;i++){h=((h<<5)-h)+p.charCodeAt(i);h|=0;}return 'hash_'+Math.abs(h).toString(36);}
+        function setError(id,has){document.getElementById(id)?.closest('.form-group')?.classList.toggle('has-error',has);}
+
+        function navigate(page){
+            const prot=['dashboard','checkout','my-addresses'];
+            if(prot.includes(page)&&!state.user){showToast('Please sign in to continue.','info');page='signin';}
+            state.currentPage=page;
+            document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+            const t=document.getElementById(`page-${page}`);
+            if(t){t.classList.add('active');t.classList.add('animate-in');}
+            document.getElementById('heroSection').style.display=page==='home'?'block':'none';
+            document.querySelectorAll('.nav-link').forEach(l=>l.classList.toggle('active',l.dataset.page===page));
+            document.getElementById('mainNav').classList.remove('open');
+            renderPage(page);
+            window.scrollTo({top:0,behavior:'smooth'});
+        }
+        function renderPage(p){
+            switch(p){
+                case 'home':renderHomeGrid();break;case 'browse':renderBrowseGrid();break;
+                case 'donate':renderDonateCards();break;case 'dashboard':renderDashboard();break;
+                case 'checkout':renderCheckout();break;case 'my-addresses':renderManageAddresses();break;
+            }
+        }
+        document.querySelectorAll('.nav-link').forEach(l=>{l.addEventListener('click',e=>{e.preventDefault();navigate(l.dataset.page);});});
+        function toggleNav(){document.getElementById('mainNav').classList.toggle('open');}
+
+        // AUTH
+        function updateAuthUI(){
+            const li=!!state.user;
+            document.getElementById('authNavBtns').classList.toggle('hidden',li);
+            document.getElementById('userMenuWrapper').classList.toggle('hidden',!li);
+            if(li){
+                document.getElementById('userAvatar').textContent=(state.user.firstName[0]+state.user.lastName[0]).toUpperCase();
+                document.getElementById('dropdownName').textContent=`${state.user.firstName} ${state.user.lastName}`;
+                document.getElementById('dropdownEmail').textContent=state.user.email;
+            }
+        }
+        function toggleUserDropdown(){document.getElementById('userDropdown').classList.toggle('open');}
+        function closeUserDropdown(){document.getElementById('userDropdown').classList.remove('open');}
+        document.addEventListener('click',e=>{if(!document.getElementById('userMenuWrapper').contains(e.target))closeUserDropdown();});
+
+        function handleSignUp(e){
+            e.preventDefault();let v=true;
+            const f=document.getElementById('signupFirst').value.trim(),l=document.getElementById('signupLast').value.trim(),
+            em=document.getElementById('signupEmail').value.trim().toLowerCase(),ph=document.getElementById('signupPhone').value.trim(),
+            pw=document.getElementById('signupPassword').value,cf=document.getElementById('signupConfirm').value,
+            ag=document.getElementById('agreeTerms').checked,city=document.getElementById('signupCity').value;
+            if(!f){setError('signupFirst',true);v=false;}else setError('signupFirst',false);
+            if(!l){setError('signupLast',true);v=false;}else setError('signupLast',false);
+            if(!validateEmail(em)){setError('signupEmail',true);v=false;}else setError('signupEmail',false);
+            if(pw.length<8){setError('signupPassword',true);v=false;}else setError('signupPassword',false);
+            if(pw!==cf){setError('signupConfirm',true);v=false;}else setError('signupConfirm',false);
+            if(!ag){showToast('Please agree to the Terms.','error');return;}
+            if(!v){showToast('Please fix the errors.','error');return;}
+            const db=loadData(SK.USERS_DB,[]);
+            if(db.find(u=>u.email===em)){showToast('An account with this email already exists.','error');setError('signupEmail',true);return;}
+            const nu={id:Date.now(),firstName:sanitize(f),lastName:sanitize(l),email:em,phone:sanitize(ph),city:city,passwordHash:hashPassword(pw),createdAt:new Date().toISOString()};
+            db.push(nu);saveData(SK.USERS_DB,db);
+            state.user={id:nu.id,firstName:nu.firstName,lastName:nu.lastName,email:nu.email,phone:nu.phone,city:nu.city};
+            saveData(SK.USER,state.user);updateAuthUI();
+            document.getElementById('signupForm').reset();
+            document.getElementById('passwordStrength').className='password-strength';
+            showModal('🎉',`!أهلاً بيك ${nu.firstName}`,`Account created! Welcome to SaveThePlate Egypt. Start saving food today!`);
+            navigate('home');
+        }
+        function handleSignIn(e){
+            e.preventDefault();let v=true;
+            const em=document.getElementById('signinEmail').value.trim().toLowerCase(),pw=document.getElementById('signinPassword').value;
+            if(!validateEmail(em)){setError('signinEmail',true);v=false;}else setError('signinEmail',false);
+            if(!pw){setError('signinPassword',true);v=false;}else setError('signinPassword',false);
+            if(!v)return;
+            const db=loadData(SK.USERS_DB,[]),u=db.find(u=>u.email===em&&u.passwordHash===hashPassword(pw));
+            if(!u){showToast('Invalid email or password.','error');setError('signinEmail',true);setError('signinPassword',true);return;}
+            state.user={id:u.id,firstName:u.firstName,lastName:u.lastName,email:u.email,phone:u.phone,city:u.city};
+            saveData(SK.USER,state.user);updateAuthUI();
+            document.getElementById('signinForm').reset();
+            showToast(`👋 !أهلاً ${u.firstName} Welcome back!`,'success');
+            navigate('home');
+        }
+        function handleLogout(){state.user=null;saveData(SK.USER,null);updateAuthUI();closeUserDropdown();showToast('Signed out. مع السلامة!','info');navigate('home');}
+        function socialAuth(p){showToast(`${p} sign-in coming soon!`,'info');}
+        function togglePasswordVis(id,btn){const i=document.getElementById(id);const ip=i.type==='password';i.type=ip?'text':'password';btn.textContent=ip?'🙈':'👁️';}
+        function checkPasswordStrength(pw){
+            const el=document.getElementById('passwordStrength');let s=0;
+            if(pw.length>=8)s++;if(/[A-Z]/.test(pw)&&/[a-z]/.test(pw))s++;if(/\d/.test(pw))s++;if(/[^A-Za-z0-9]/.test(pw))s++;
+            const lb=['','Weak','Fair','Good','Strong'],cl=['','#c62828','#e65100','#f9a825','#2e7d32'];
+            el.className=`password-strength strength-${s}`;
+            el.querySelector('.strength-text').textContent=pw.length>0?lb[s]:'';
+            el.querySelector('.strength-text').style.color=cl[s];
+        }
+
+        // FOOD CARDS
+        function createFoodCard(food){
+            const disc=Math.round((1-food.discountedPrice/food.originalPrice)*100);
+            const bg={bakery:'#fff8e1',restaurant:'#fce4ec',grocery:'#e8f5e9',cafe:'#efebe9','street-food':'#fff3e0'};
+            return `<div class="food-card">
+                <div class="food-card-img" style="background:${bg[food.category]||'#f5f5f5'}">
+                    <span>${food.emoji}</span>
+                    <div class="badges"><span class="badge badge-discount">-${disc}%</span><span class="badge badge-category">${sanitize(food.category)}</span></div>
+                    <div class="location-badge">📍 ${sanitize(food.city||'Egypt')}${food.district?', '+sanitize(food.district):''}</div>
+                    <div class="time-left">⏰ ${food.hoursLeft||'?'}h left</div>
+                </div>
+                <div class="food-card-body">
+                    <h3>${sanitize(food.name)}</h3>
+                    <div class="vendor">📍 ${sanitize(food.vendor)} — ${sanitize(food.city||'Egypt')}</div>
+                    <div class="description">${sanitize(food.description||'')}</div>
+                    <div class="price-row">
+                        <div><span class="price-original">${egp(food.originalPrice)}</span> <span class="price-discounted">${egp(food.discountedPrice)}</span></div>
+                        <span style="font-size:0.8rem;color:var(--text-light);">${food.quantity} left</span>
+                    </div>
+                    <div class="food-card-actions"><button class="btn btn-success btn-sm" onclick="addToCart(${food.id})" ${food.quantity<=0?'disabled':''}> 🛒 ${food.quantity<=0?'Sold Out':'Add to Cart'}</button></div>
+                </div></div>`;
+        }
+        function renderHomeGrid(){document.getElementById('homeGrid').innerHTML=state.foods.slice(0,6).map(createFoodCard).join('');}
+        function renderBrowseGrid(){
+            const g=document.getElementById('browseGrid'),f=getFilteredFoods();
+            g.innerHTML=f.length===0?'<div class="cart-empty" style="grid-column:1/-1"><div class="icon">🔍</div><p>No items found. Try different filters!</p></div>':f.map(createFoodCard).join('');
+        }
+        function getFilteredFoods(){
+            let f=[...state.foods];
+            const s=(document.getElementById('searchInput')?.value||'').toLowerCase().trim();
+            const cat=document.getElementById('categoryFilter')?.value||'';
+            const city=document.getElementById('cityFilter')?.value||'';
+            const sort=document.getElementById('sortFilter')?.value||'discount';
+            if(s) f=f.filter(x=>x.name.toLowerCase().includes(s)||x.vendor.toLowerCase().includes(s)||(x.city||'').toLowerCase().includes(s)||(x.district||'').toLowerCase().includes(s));
+            if(cat) f=f.filter(x=>x.category===cat);
+            if(city) f=f.filter(x=>x.city===city);
+            switch(sort){
+                case 'discount':f.sort((a,b)=>(1-b.discountedPrice/b.originalPrice)-(1-a.discountedPrice/a.originalPrice));break;
+                case 'price-low':f.sort((a,b)=>a.discountedPrice-b.discountedPrice);break;
+                case 'price-high':f.sort((a,b)=>b.discountedPrice-a.discountedPrice);break;
+                case 'expiring':f.sort((a,b)=>(a.hoursLeft||99)-(b.hoursLeft||99));break;
+            }
+            return f;
+        }
+        function filterFood(){renderBrowseGrid();}
+
+        // CART
+        function addToCart(fid){
+            const food=state.foods.find(f=>f.id===fid);
+            if(!food||food.quantity<=0){showToast('Item unavailable.','error');return;}
+            const ex=state.cart.find(i=>i.id===fid);
+            if(ex){if(ex.qty>=food.quantity){showToast('Max quantity reached.','error');return;}ex.qty++;}
+            else state.cart.push({id:food.id,name:food.name,vendor:food.vendor,emoji:food.emoji,price:food.discountedPrice,originalPrice:food.originalPrice,qty:1,city:food.city});
+            saveData(SK.CART,state.cart);updateCartUI();showToast(`${food.emoji} ${food.name} added!`,'success');
+        }
+        function removeFromCart(fid){state.cart=state.cart.filter(i=>i.id!==fid);saveData(SK.CART,state.cart);updateCartUI();renderCartItems();}
+        function updateCartQty(fid,d){
+            const i=state.cart.find(x=>x.id===fid);if(!i)return;
+            const food=state.foods.find(f=>f.id===fid);i.qty+=d;
+            if(i.qty<=0){removeFromCart(fid);return;}
+            if(food&&i.qty>food.quantity){i.qty=food.quantity;showToast('Max available reached.','error');}
+            saveData(SK.CART,state.cart);updateCartUI();renderCartItems();
+        }
+        function clearCart(){state.cart=[];saveData(SK.CART,state.cart);updateCartUI();renderCartItems();showToast('Cart cleared.','info');}
+        function updateCartUI(){
+            document.getElementById('cartCount').textContent=state.cart.reduce((s,i)=>s+i.qty,0);
+            document.getElementById('cartTotal').textContent=egp(state.cart.reduce((s,i)=>s+i.price*i.qty,0));
+            document.getElementById('cartFooter').style.display=state.cart.length>0?'block':'none';
+        }
+        function renderCartItems(){
+            const c=document.getElementById('cartItems');
+            if(!state.cart.length){c.innerHTML='<div class="cart-empty"><div class="icon">🛒</div><p>Your cart is empty.<br>Start rescuing Egyptian food!</p></div>';return;}
+            c.innerHTML=state.cart.map(i=>`<div class="cart-item"><div class="cart-item-emoji">${i.emoji}</div><div class="cart-item-info"><h4>${sanitize(i.name)}</h4><div class="vendor">${sanitize(i.vendor)}</div><div class="qty-control mt-1"><button onclick="updateCartQty(${i.id},-1)">−</button><span>${i.qty}</span><button onclick="updateCartQty(${i.id},1)">+</button></div></div><div class="cart-item-price">${egp(i.price*i.qty)}</div><button class="cart-item-remove" onclick="removeFromCart(${i.id})">✕</button></div>`).join('');
+        }
+        function toggleCart(){document.getElementById('cartOverlay').classList.toggle('open');document.getElementById('cartPanel').classList.toggle('open');renderCartItems();}
+
+        // CHECKOUT
+        function goToCheckout(){
+            if(!state.cart.length){showToast('Cart is empty!','error');return;}
+            if(!state.user){showToast('Please sign in.','info');toggleCart();navigate('signin');return;}
+            toggleCart();state.checkoutStep=1;state.deliveryType='pickup';state.selectedAddressId=null;navigate('checkout');
+        }
+        function renderCheckout(){goToCheckoutStep(state.checkoutStep);}
+        function goToCheckoutStep(step){
+            if(step===2&&state.deliveryType==='delivery'&&!state.selectedAddressId){showToast('Please select a delivery address.','error');return;}
+            if(step===3&&state.paymentMethod==='card'&&step>state.checkoutStep){
+                const cn=document.getElementById('cardName').value.trim(),cnum=document.getElementById('cardNumber').value.replace(/\s/g,''),
+                cexp=document.getElementById('cardExpiry').value.trim(),ccvc=document.getElementById('cardCVC').value.trim();
+                let v=true;
+                if(!cn){setError('cardName',true);v=false;}else setError('cardName',false);
+                if(cnum.length<13){setError('cardNumber',true);v=false;}else setError('cardNumber',false);
+                if(!/^\d{2}\/\d{2}$/.test(cexp)){setError('cardExpiry',true);v=false;}else setError('cardExpiry',false);
+                if(ccvc.length<3){setError('cardCVC',true);v=false;}else setError('cardCVC',false);
+                if(!v){showToast('Please fix payment details.','error');return;}
+            }
+            state.checkoutStep=step;
+            document.querySelectorAll('#checkoutStepper .step').forEach(s=>{const n=parseInt(s.dataset.step);s.classList.toggle('active',n===step);s.classList.toggle('completed',n<step);});
+            [1,2,3].forEach(n=>document.getElementById(`checkoutStep${n}`).classList.toggle('hidden',n!==step));
+            renderOrderSummary(`checkoutSummaryItems${step}`,`checkoutSummaryTotals${step}`);
+            if(step===3)renderReview();
+        }
+        function renderOrderSummary(iId,tId){
+            const iE=document.getElementById(iId),tE=document.getElementById(tId);if(!iE||!tE)return;
+            const sub=state.cart.reduce((s,i)=>s+i.price*i.qty,0),orig=state.cart.reduce((s,i)=>s+i.originalPrice*i.qty,0),
+            sav=orig-sub,df=state.deliveryType==='delivery'?DELIVERY_FEE:0,tot=sub+df;
+            iE.innerHTML='<div class="order-summary-items">'+state.cart.map(i=>`<div class="summary-item"><div class="name">${i.emoji} ${sanitize(i.name)} <span style="color:var(--text-light)">×${i.qty}</span></div><div>${egp(i.price*i.qty)}</div></div>`).join('')+'</div>';
+            tE.innerHTML=`<div class="summary-row"><span>Subtotal</span><span>${egp(sub)}</span></div>
+                <div class="summary-row savings"><span>You save</span><span>-${egp(sav)}</span></div>
+                ${df>0?`<div class="summary-row delivery-fee"><span>🛵 Delivery Fee</span><span>${egp(df)}</span></div>`:'<div class="summary-row"><span>🏪 Pickup</span><span>Free</span></div>'}
+                <div class="summary-row total"><span>Total</span><span>${egp(tot)}</span></div>
+                <div class="delivery-eta">${state.deliveryType==='delivery'?'🛵 Estimated delivery: 30-50 minutes across Egyptian cities':'🏪 Ready for pickup in ~15 minutes'}</div>`;
+        }
+        function selectDeliveryType(t,btn){
+            state.deliveryType=t;
+            document.querySelectorAll('.delivery-option-btn').forEach(b=>b.classList.remove('selected'));btn.classList.add('selected');
+            document.getElementById('deliveryAddressSection').classList.toggle('hidden',t==='pickup');
+            if(t==='delivery')renderSavedAddresses();
+            renderOrderSummary(`checkoutSummaryItems${state.checkoutStep}`,`checkoutSummaryTotals${state.checkoutStep}`);
+        }
+        function renderSavedAddresses(){
+            const l=document.getElementById('savedAddressesList'),a=state.addresses;
+            if(!a.length){l.innerHTML='<p style="color:var(--text-light);font-size:0.9rem;margin-bottom:12px;">No saved addresses. Add one below.</p>';document.getElementById('newAddressForm').classList.remove('hidden');document.getElementById('toggleNewAddrBtn').classList.add('hidden');return;}
+            document.getElementById('toggleNewAddrBtn').classList.remove('hidden');
+            l.innerHTML=a.map(x=>`<div class="saved-address ${state.selectedAddressId===x.id?'selected':''}" onclick="selectAddress(${x.id})"><div class="radio"></div><div style="flex:1;"><strong>${sanitize(x.label||'Address')}</strong><div style="font-size:0.85rem;color:var(--text-light);">${sanitize(x.street)}, ${sanitize(x.district)}, ${sanitize(x.city)}, ${sanitize(x.governorate)}</div>${x.phone?`<div style="font-size:0.8rem;color:var(--text-light);">📞 ${sanitize(x.phone)}</div>`:''}</div></div>`).join('');
+        }
+        function selectAddress(id){state.selectedAddressId=id;renderSavedAddresses();}
+        function toggleNewAddressForm(){document.getElementById('newAddressForm').classList.toggle('hidden');}
+        function saveNewAddress(){
+            const st=document.getElementById('addrStreet').value.trim(),dist=document.getElementById('addrDistrict').value.trim(),
+            city=document.getElementById('addrCity').value,gov=document.getElementById('addrGov').value,
+            ph=document.getElementById('addrPhone').value.trim(),lb=document.getElementById('addrLabel').value.trim()||'Home',
+            nt=document.getElementById('addrNotes').value.trim();
+            let v=true;
+            if(!st){setError('addrStreet',true);v=false;}else setError('addrStreet',false);
+            if(!dist){setError('addrDistrict',true);v=false;}else setError('addrDistrict',false);
+            if(!city){setError('addrCity',true);v=false;}else setError('addrCity',false);
+            if(!gov){setError('addrGov',true);v=false;}else setError('addrGov',false);
+            if(!ph){setError('addrPhone',true);v=false;}else setError('addrPhone',false);
+            if(!v){showToast('Please fill all required fields.','error');return;}
+            const addr={id:Date.now(),label:sanitize(lb),street:sanitize(st),district:sanitize(dist),city:sanitize(city),governorate:sanitize(gov),phone:sanitize(ph),notes:sanitize(nt),country:'Egypt'};
+            if(document.getElementById('saveAddress').checked){state.addresses.push(addr);saveData(SK.ADDRESSES,state.addresses);}
+            else state.addresses.push(addr);
+            state.selectedAddressId=addr.id;renderSavedAddresses();
+            document.getElementById('newAddressForm').classList.add('hidden');
+            ['addrLabel','addrStreet','addrDistrict','addrPhone','addrNotes'].forEach(id=>document.getElementById(id).value='');
+            document.getElementById('addrCity').selectedIndex=0;document.getElementById('addrGov').selectedIndex=0;
+            showToast('✅ Address saved!','success');
+        }
+        function selectPayment(m,btn){
+            state.paymentMethod=m;
+            document.querySelectorAll('.pay-method-btn').forEach(b=>b.classList.remove('selected'));btn.classList.add('selected');
+            const cf=document.getElementById('cardPaymentForm'),am=document.getElementById('altPaymentMsg');
+            if(m==='card'){cf.classList.remove('hidden');am.classList.add('hidden');}
+            else{cf.classList.add('hidden');am.classList.remove('hidden');
+                const i={'vodafone-cash':'📱',fawry:'🏪',cod:'💵'},t={'vodafone-cash':'You will receive a Vodafone Cash payment request on your Egyptian mobile number.',fawry:'A Fawry payment code will be sent to your phone. Pay at any Fawry outlet across Egypt.',cod:'Pay with cash in Egyptian Pounds when your order arrives. الدفع عند الاستلام'};
+                document.getElementById('altPayIcon').textContent=i[m]||'💳';document.getElementById('altPayText').textContent=t[m]||'';
+            }
+        }
+        function formatCardNumber(i){let v=i.value.replace(/\D/g,'').substring(0,16);v=v.replace(/(.{4})/g,'$1 ').trim();i.value=v;}
+        function formatExpiry(i){let v=i.value.replace(/\D/g,'').substring(0,4);if(v.length>=2)v=v.substring(0,2)+'/'+v.substring(2);i.value=v;}
+        function renderReview(){
+            const fe=document.getElementById('reviewFulfillment'),pe=document.getElementById('reviewPayment'),ee=document.getElementById('reviewEta');
+            if(state.deliveryType==='pickup'){fe.innerHTML='🏪 <strong>Pickup</strong> — Collect from vendor locations in Egypt';}
+            else{const a=state.addresses.find(x=>x.id===state.selectedAddressId);fe.innerHTML=a?`🛵 <strong>Delivery to ${sanitize(a.label)}</strong><br>${sanitize(a.street)}, ${sanitize(a.district)}, ${sanitize(a.city)}, ${sanitize(a.governorate)}, Egypt 🇪🇬${a.notes?'<br>📝 '+sanitize(a.notes):''}`:'🛵 <strong>Delivery</strong>';}
+            const ml={'card':'💳 Credit/Debit Card','vodafone-cash':'📱 Vodafone Cash',fawry:'🏪 Fawry',cod:'💵 Cash on Delivery'};
+            let pi=ml[state.paymentMethod]||'💳 Card';
+            if(state.paymentMethod==='card'){const n=document.getElementById('cardNumber').value.replace(/\s/g,'');if(n.length>=4)pi+=` ending in ${n.slice(-4)}`;}
+            pe.innerHTML=pi;
+            ee.innerHTML=state.deliveryType==='delivery'?'🛵 Estimated delivery: 30-50 minutes within Egyptian cities':'🏪 Ready for pickup in approximately 15 minutes';
+        }
+        function placeOrder(){
+            if(!state.cart.length){showToast('Cart is empty!','error');return;}
+            const btn=document.getElementById('placeOrderBtn');btn.disabled=true;btn.innerHTML='<span class="spinner"></span> Processing...';
+            setTimeout(()=>{
+                const sub=state.cart.reduce((s,i)=>s+i.price*i.qty,0),orig=state.cart.reduce((s,i)=>s+i.originalPrice*i.qty,0),
+                sav=orig-sub,df=state.deliveryType==='delivery'?DELIVERY_FEE:0,tot=sub+df,
+                tm=state.cart.reduce((s,i)=>s+i.qty,0),
+                da=state.deliveryType==='delivery'?state.addresses.find(a=>a.id===state.selectedAddressId):null;
+                const order={id:Date.now(),items:[...state.cart],subtotal:sub,total:tot,saved:sav,meals:tm,deliveryFee:df,deliveryType:state.deliveryType,deliveryAddress:da?{...da}:null,paymentMethod:state.paymentMethod,date:new Date().toISOString(),status:'confirmed',country:'Egypt'};
+                state.cart.forEach(ci=>{const f=state.foods.find(x=>x.id===ci.id);if(f)f.quantity=Math.max(0,f.quantity-ci.qty);});
+                state.orders.push(order);saveData(SK.ORDERS,state.orders);
+                state.cart=[];saveData(SK.CART,state.cart);updateCartUI();
+                btn.disabled=false;btn.innerHTML='🎉 Place Order';
+                const dm=state.deliveryType==='delivery'?`Your food will be delivered to ${da?.label||'your address'} in ${da?.city||'Egypt'} within 30-50 minutes.`:'Pick up your food at the listed vendor times.';
+                showModal('🎉','!تم تأكيد الطلب Order Placed!',`You saved ${tm} meal${tm>1?'s':''} and ${egp(sav)}! ${dm}`);
+                navigate('dashboard');
+            },1500);
+        }
+
+        // ADDRESSES MGMT
+        function renderManageAddresses(){
+            const l=document.getElementById('manageAddressesList');
+            if(!state.addresses.length){l.innerHTML='<div class="cart-empty"><div class="icon">📍</div><p>No saved addresses yet.</p></div>';return;}
+            l.innerHTML=state.addresses.map(a=>`<div style="display:flex;align-items:center;gap:12px;padding:16px;background:var(--bg);border-radius:8px;margin-bottom:12px;"><div style="font-size:1.5rem;">📍</div><div style="flex:1;"><strong>${sanitize(a.label||'Address')}</strong><div style="font-size:0.85rem;color:var(--text-light);">${sanitize(a.street)}, ${sanitize(a.district||'')}, ${sanitize(a.city)}, ${sanitize(a.governorate||'')}, Egypt 🇪🇬</div>${a.phone?`<div style="font-size:0.8rem;color:var(--text-light);">📞 ${sanitize(a.phone)}</div>`:''}</div><button class="btn btn-danger btn-sm" onclick="deleteAddress(${a.id})">🗑️</button></div>`).join('');
+        }
+        function deleteAddress(id){state.addresses=state.addresses.filter(a=>a.id!==id);saveData(SK.ADDRESSES,state.addresses);renderManageAddresses();showToast('Address deleted.','info');}
+        function toggleManageNewAddr(){document.getElementById('manageNewAddrForm').classList.toggle('hidden');}
+        function saveManageAddress(){
+            const st=document.getElementById('mAddrStreet').value.trim(),dist=document.getElementById('mAddrDistrict').value.trim(),
+            city=document.getElementById('mAddrCity').value,gov=document.getElementById('mAddrGov').value,
+            ph=document.getElementById('mAddrPhone').value.trim(),lb=document.getElementById('mAddrLabel').value.trim()||'Home';
+            let v=true;
+            if(!st){setError('mAddrStreet',true);v=false;}else setError('mAddrStreet',false);
+            if(!dist){setError('mAddrDistrict',true);v=false;}else setError('mAddrDistrict',false);
+            if(!city){setError('mAddrCity',true);v=false;}else setError('mAddrCity',false);
+            if(!gov){setError('mAddrGov',true);v=false;}else setError('mAddrGov',false);
+            if(!ph){setError('mAddrPhone',true);v=false;}else setError('mAddrPhone',false);
+            if(!v)return;
+            state.addresses.push({id:Date.now(),label:sanitize(lb),street:sanitize(st),district:sanitize(dist),city:sanitize(city),governorate:sanitize(gov),phone:sanitize(ph),notes:'',country:'Egypt'});
+            saveData(SK.ADDRESSES,state.addresses);
+            ['mAddrLabel','mAddrStreet','mAddrDistrict','mAddrPhone'].forEach(id=>document.getElementById(id).value='');
+            document.getElementById('mAddrCity').selectedIndex=0;document.getElementById('mAddrGov').selectedIndex=0;
+            document.getElementById('manageNewAddrForm').classList.add('hidden');
+            renderManageAddresses();showToast('✅ Address saved!','success');
+        }
+
+        // DONATE
+        function renderDonateCards(){
+            document.getElementById('donateGrid').innerHTML=shelters.map(s=>{
+                const p=Math.min(100,Math.round((s.raised/s.goal)*100));
+                return `<div class="donate-card"><div class="icon">${s.icon}</div><h3>${sanitize(s.name)}</h3><p>${sanitize(s.description)}</p><span class="badge badge-donated">${s.mealsProvided.toLocaleString()} meals provided</span><div class="progress-bar mt-2"><div class="progress-bar-fill" style="width:${p}%"></div></div><div class="progress-text">${egp(s.raised)} of ${egp(s.goal)} (${p}%)</div><div class="donate-amount-btns mt-2"><button class="donate-amount-btn" onclick="selectDonateAmount(this,50)">50 EGP</button><button class="donate-amount-btn selected" onclick="selectDonateAmount(this,100)">100 EGP</button><button class="donate-amount-btn" onclick="selectDonateAmount(this,250)">250 EGP</button><button class="donate-amount-btn" onclick="selectDonateAmount(this,500)">500 EGP</button></div><button class="btn btn-primary btn-block" onclick="makeDonation(${s.id},this)">❤️ Donate Now — تبرع</button></div>`;
+            }).join('');
+        }
+        function selectDonateAmount(btn){btn.closest('.donate-card').querySelectorAll('.donate-amount-btn').forEach(b=>b.classList.remove('selected'));btn.classList.add('selected');}
+        function makeDonation(sid,btnEl){
+            const card=btnEl.closest('.donate-card'),sel=card.querySelector('.donate-amount-btn.selected'),
+            amount=sel?parseInt(sel.textContent):100,shelter=shelters.find(s=>s.id===sid);
+            if(shelter){shelter.raised=Math.min(shelter.goal,shelter.raised+amount);shelter.mealsProvided+=Math.floor(amount/10);}
+            state.donations.push({id:Date.now(),shelterId:sid,shelterName:shelter?.name||'',amount,date:new Date().toISOString()});
+            saveData(SK.DONATIONS,state.donations);renderDonateCards();
+            showModal('❤️','!شكراً Thank You!',`Your ${egp(amount)} donation to ${shelter?.name} will provide ~${Math.floor(amount/10)} meals to Egyptians in need!`);
+        }
+
+        // LIST FOOD
+        let selectedEmoji='🥐';
+        function selectEmoji(btn,e){selectedEmoji=e;document.querySelectorAll('#emojiPicker .tab-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');}
+        function handleListFood(e){
+            e.preventDefault();
+            if(!state.user){showToast('Please sign in.','info');navigate('signin');return;}
+            const nm=document.getElementById('foodName').value.trim(),vn=document.getElementById('vendorName').value.trim(),
+            cat=document.getElementById('foodCategory').value,city=document.getElementById('vendorCity').value,
+            qty=parseInt(document.getElementById('foodQuantity').value),op=parseFloat(document.getElementById('originalPrice').value),
+            dp=parseFloat(document.getElementById('discountedPrice').value),desc=document.getElementById('foodDescription').value.trim(),
+            ps=document.getElementById('pickupStart').value,pe=document.getElementById('pickupEnd').value;
+            let v=true;
+            if(!nm||nm.length<2){setError('foodName',true);v=false;}else setError('foodName',false);
+            if(!vn||vn.length<2){setError('vendorName',true);v=false;}else setError('vendorName',false);
+            if(!cat){setError('foodCategory',true);v=false;}else setError('foodCategory',false);
+            if(!city){setError('vendorCity',true);v=false;}else setError('vendorCity',false);
+            if(!qty||qty<1){setError('foodQuantity',true);v=false;}else setError('foodQuantity',false);
+            if(!validatePrice(op,dp)){setError('discountedPrice',true);v=false;}else setError('discountedPrice',false);
+            if(!ps){setError('pickupStart',true);v=false;}else setError('pickupStart',false);
+            if(!pe||pe<=ps){setError('pickupEnd',true);v=false;}else setError('pickupEnd',false);
+            if(!v){showToast('Please fix the errors.','error');return;}
+            const nf={id:Date.now(),name:sanitize(nm),vendor:sanitize(vn),category:cat,emoji:selectedEmoji,originalPrice:op,discountedPrice:dp,quantity:qty,description:sanitize(desc),pickupStart:ps,pickupEnd:pe,hoursLeft:Math.floor(Math.random()*8)+1,city:city,district:''};
+            state.foods.push(nf);state.userListings.push(nf);saveData(SK.LISTINGS,state.userListings);
+            document.getElementById('listFoodForm').reset();
+            document.querySelectorAll('#emojiPicker .tab-btn').forEach(b=>b.classList.remove('active'));
+            document.querySelector('#emojiPicker .tab-btn').classList.add('active');selectedEmoji='🥐';
+            showModal('✅','!تم إضافة الطعام Food Listed!',`"${nm}" is now listed in ${city}! Egyptian customers can rescue your surplus food.`);
+        }
+
+        // DASHBOARD
+        function renderDashboard(){
+            const o=state.orders,to=o.length,tm=o.reduce((s,x)=>s+x.meals,0),ts=o.reduce((s,x)=>s+x.saved,0),tc=(tm*0.7).toFixed(1);
+            document.getElementById('dashOrders').textContent=to;
+            document.getElementById('dashMeals').textContent=tm;
+            document.getElementById('dashSaved').textContent=egp(ts);
+            document.getElementById('dashCO2').textContent=`${tc} kg`;
+            const ol=document.getElementById('orderList');
+            if(!o.length){ol.innerHTML='<div class="cart-empty"><div class="icon">📦</div><p>No orders yet.</p></div>';return;}
+            ol.innerHTML=o.slice().reverse().map(x=>{
+                const dt=new Date(x.date).toLocaleDateString('en-EG',{month:'short',day:'numeric',year:'numeric',hour:'2-digit',minute:'2-digit'}),
+                items=x.items.map(i=>`${i.emoji} ${sanitize(i.name)} ×${i.qty}`).join(', '),
+                isDel=x.deliveryType==='delivery',sl=isDel?'delivering':x.status;
+                return `<div class="order-item"><div class="emoji">${x.items[0]?.emoji||'📦'}</div><div class="info"><h4>Order #${x.id.toString().slice(-6)}</h4><p>${items}</p><p>📅 ${dt}</p>${isDel&&x.deliveryAddress?`<div class="delivery-badge">🛵 Delivery to ${sanitize(x.deliveryAddress.label||'')}, ${sanitize(x.deliveryAddress.city||'Egypt')}</div>`:'<div class="delivery-badge">🏪 Pickup</div>'}</div><div><div class="order-status status-${sl}">${sl.toUpperCase()}</div><div style="font-weight:700;color:var(--primary);margin-top:4px;">${egp(x.total)}</div><div style="font-size:0.8rem;color:var(--text-light);">Saved ${egp(x.saved)}</div></div></div>`;
+            }).join('');
+        }
+
+        // MODAL & TOAST
+        function showModal(ic,t,m){document.getElementById('modalIcon').textContent=ic;document.getElementById('modalTitle').textContent=t;document.getElementById('modalMsg').textContent=m;document.getElementById('successModal').classList.add('open');}
+        function closeModal(){document.getElementById('successModal').classList.remove('open');}
+        document.getElementById('successModal').addEventListener('click',e=>{if(e.target===e.currentTarget)closeModal();});
+        document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeModal();if(document.getElementById('cartPanel').classList.contains('open'))toggleCart();closeUserDropdown();}});
+        function showToast(msg,type='success'){
+            const c=document.getElementById('toastContainer'),t=document.createElement('div');t.className=`toast toast-${type}`;
+            const i={success:'✅',error:'❌',info:'ℹ️'};t.innerHTML=`${i[type]||''} ${sanitize(msg)}`;c.appendChild(t);
+            setTimeout(()=>{if(t.parentNode)t.parentNode.removeChild(t);},3000);
+        }
+
+        // INIT
+        function init(){updateCartUI();updateAuthUI();renderHomeGrid();animateCounter('statMeals',0,12487,2000);animateCounter('statDonated',0,3210,2000);}
+        function animateCounter(id,s,e,d){
+            const el=document.getElementById(id);if(!el)return;const r=e-s,st=performance.now();
+            function u(t){const p=Math.min((t-st)/d,1),ea=1-Math.pow(1-p,3);el.textContent=Math.floor(s+r*ea).toLocaleString();if(p<1)requestAnimationFrame(u);}
+            requestAnimationFrame(u);
+        }
+        init();
+    </script>
+</body>
+</html>
